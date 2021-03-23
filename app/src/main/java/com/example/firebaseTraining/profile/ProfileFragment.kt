@@ -48,5 +48,9 @@ class ProfileFragment : Fragment() {
 
     private fun bindUserData(user:User) {
         Log.d(PROFILE_DEBUG,user.toString())
+        binding.userEmailET.text = user.email
+        binding.userNameET.setText(user.name)
+        binding.userSurnameET.setText(user.surname)
+
     }
 }

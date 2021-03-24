@@ -1,10 +1,8 @@
 package com.example.firebaseTraining.home
 
 import android.os.Bundle
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
@@ -12,9 +10,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.firebaseTraining.R
 import com.example.firebaseTraining.data.Car
 import com.example.firebaseTraining.databinding.FragmentHomeBinding
+import com.google.firebase.auth.FirebaseAuth
 
 class HomeFragment : Fragment(), OnCarItemLongClick {
 
+    private val firebaseAuth = FirebaseAuth.getInstance()
     private val homeViewModel by viewModels<HomeViewModel>()
     private val adapter = CarAdapter(this)
 
@@ -27,8 +27,24 @@ class HomeFragment : Fragment(), OnCarItemLongClick {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        setHasOptionsMenu(true)
         _binding = FragmentHomeBinding.inflate(layoutInflater,container,false)
         return binding.root
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.logout_menu,menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            R.id.logout_action -> {
+                firebaseAuth.signOut()
+                requireActivity().finish()
+            }
+        }
+        return false
     }
 
     override fun onDestroyView() {
@@ -38,7 +54,7 @@ class HomeFragment : Fragment(), OnCarItemLongClick {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.recyclerViewHome.layoutManager = GridLayoutManager(requireContext(),1)
+        binding.recyclerViewHome.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerViewHome.adapter = adapter
     }
 
@@ -51,5 +67,6 @@ class HomeFragment : Fragment(), OnCarItemLongClick {
 
     override fun onCarLongClick(car: Car, position: Int) {
         Toast.makeText(requireContext(), car.name, Toast.LENGTH_LONG).show()
+        homeViewModel.addFavCar(car)
     }
 }

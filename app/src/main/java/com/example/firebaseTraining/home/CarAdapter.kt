@@ -31,6 +31,11 @@ RecyclerView.Adapter<CarAdapter.CarViewHolder>() {
     override fun getItemCount(): Int {
         return carsList.size
     }
+
+    fun removedCar(car:Car, position:Int) {
+        carsList.remove(car)
+        notifyItemRemoved(position)
+    }
     inner class CarViewHolder(binding: ListRowBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
             binding.root.setOnLongClickListener {

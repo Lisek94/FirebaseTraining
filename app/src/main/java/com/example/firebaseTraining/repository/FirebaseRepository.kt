@@ -89,4 +89,22 @@ class FirebaseRepository {
                 .addOnFailureListener {
                     Log.d(REPO_DEBUG,it.message.toString())
                 }}
+
+    fun createNewUser(user: User) {
+        cloud.collection("users")
+                .document(user.uid!!)
+                .set(user)
+    }
+
+    fun editProfileData(map: Map<String,String>) {
+        cloud.collection("users")
+                .document(auth.currentUser!!.uid)
+                .update(map)
+                .addOnSuccessListener {
+                    Log.d(REPO_DEBUG,"Zaktualizowane dane")
+                }
+                .addOnFailureListener {
+                    Log.d(REPO_DEBUG,it.message.toString())
+                }
+    }
 }

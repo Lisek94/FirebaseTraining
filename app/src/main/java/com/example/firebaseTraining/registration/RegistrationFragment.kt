@@ -5,10 +5,13 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import com.example.firebaseTraining.BaseFragment
 import com.example.firebaseTraining.databinding.FragmentSignUpBinding
+import com.example.firebaseTraining.profile.ProfileViewModel
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.auth.User
 
 class RegistrationFragment : BaseFragment() {
     companion object {
@@ -18,6 +21,7 @@ class RegistrationFragment : BaseFragment() {
     private val binding
         get() = _binding!!
     private val firebaseAuth = FirebaseAuth.getInstance()
+    private val registrationViewModel by viewModels<RegistrationViewModel>()
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -47,7 +51,18 @@ class RegistrationFragment : BaseFragment() {
             if (password==repeatPassword) {
                 firebaseAuth.createUserWithEmailAndPassword(email,password)
                         .addOnSuccessListener {authRes ->
-                            if (authRes.user != null) startApp()
+                            if (authRes.user != null) {
+                                val user = com.example.firebaseTraining.data.User(
+                                        authRes.user!!.uid,
+                                        "",
+                                        "",
+                                        authRes.user!!.email,
+                                        listOf(),
+                                        ""
+                                        )
+                                registrationViewModel.createNewUser(user)
+                                startApp()
+                            }
                         }
                         .addOnFailureListener { exc ->
                             Snackbar.make(requireView(),"Something went wrong", Snackbar.LENGTH_SHORT).show()

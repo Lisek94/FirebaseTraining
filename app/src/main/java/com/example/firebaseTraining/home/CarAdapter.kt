@@ -19,7 +19,7 @@ RecyclerView.Adapter<CarAdapter.CarViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CarAdapter.CarViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        val binding = ListRowBinding.inflate(layoutInflater)
+        val binding = ListRowBinding.inflate(layoutInflater,null,false)
         return CarViewHolder(binding)
     }
 

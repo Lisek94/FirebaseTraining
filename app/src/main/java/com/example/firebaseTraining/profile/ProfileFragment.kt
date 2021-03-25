@@ -8,13 +8,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.firebaseTraining.R
 import com.example.firebaseTraining.data.Car
 import com.example.firebaseTraining.data.User
 import com.example.firebaseTraining.databinding.FragmentProfileBinding
-import com.example.firebaseTraining.databinding.FragmentSignInBinding
 import com.example.firebaseTraining.home.CarAdapter
-import com.example.firebaseTraining.home.HomeViewModel
 import com.example.firebaseTraining.home.OnCarItemLongClick
 
 class ProfileFragment : Fragment(), OnCarItemLongClick {
@@ -42,6 +39,7 @@ class ProfileFragment : Fragment(), OnCarItemLongClick {
         super.onViewCreated(view, savedInstanceState)
         binding.recyclerFavCars.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerFavCars.adapter = adapter
+        setupSubmitDataClick()
     }
 
     override fun onDestroyView() {
@@ -62,6 +60,11 @@ class ProfileFragment : Fragment(), OnCarItemLongClick {
         })
     }
 
+    override fun onCarLongClick(car: Car, position: Int) {
+        profileViewModel.removeFavCar(car)
+        adapter.removedCar(car,position)
+    }
+
     private fun bindUserData(user:User) {
         Log.d(PROFILE_DEBUG,user.toString())
         binding.userEmailET.text = user.email
@@ -70,8 +73,13 @@ class ProfileFragment : Fragment(), OnCarItemLongClick {
 
     }
 
-    override fun onCarLongClick(car: Car, position: Int) {
-        profileViewModel.removeFavCar(car)
-        adapter.removedCar(car,position)
+    private fun setupSubmitDataClick() {
+        binding.submitDataProfile.setOnClickListener {
+            val name = binding.userNameET.text.trim().toString()
+            val surname = binding.userSurnameET.text.trim().toString()
+
+            val map = mapOf("name" to name, "surname" to surname)
+            profileViewModel.editProfileData(map)
+        }
     }
 }
